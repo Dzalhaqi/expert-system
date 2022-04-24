@@ -133,7 +133,6 @@ processButton.addEventListener("click", () => {
     }
     console.table(indication)
     console.table(diseases_list)
-    console.log(persentaseDisease)
 
   } else {
     alert("Threshold is empty")
