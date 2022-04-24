@@ -1,0 +1,19 @@
+{
+  "name": "expert-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./src/input.css -o ./src/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dzalhaqi/expert-system.git"
+  },
+  "author": "Dzal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Dzalhaqi/expert-system/issues"
+  },
+  "homepage": "https://github.com/Dzalhaqi/expert-system#readme"
+}
