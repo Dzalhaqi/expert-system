@@ -175,7 +175,6 @@ processButton.addEventListener("click", () => {
           let conclusion_name = document.createTextNode(`${conclusion}`)
           pConclusion.appendChild(conclusion_name)
           conclusionContainer.appendChild(pConclusion)
-          console.log("jalan")
         }
 
         p.appendChild(disease_name)
