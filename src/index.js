@@ -18,12 +18,6 @@ function getCheckboxesData() {
   })
 }
 
-function fitEffectList() {
-  for (effect in indication) {
-    console.log(indication[effect])
-  }
-}
-
 function getPercentage(...indicationItem) {
   indicationItem = [...indicationItem]
 
@@ -93,65 +87,107 @@ function main() {
   getresultPrediction('mencret berdarah', 'sakit perut', 'demam', 'minum susu', 'Campylobacter')
 }
 
+function validateThreshold() {
+  let thresholdValue = threshold.value
+  if (thresholdValue > 100 || thresholdValue < 0) {
+    alert('Threshold boleh kosong atau hanya bernilai 0 sampai 100')
+    return false
+  }
+  return true
+}
+
 
 processButton.addEventListener("click", () => {
   console.clear()
   main()
-  if (threshold.value !== "") {
-    let threshold_value = parseFloat(threshold.value)
+  let sum_of_checkboxes = checkboxes_list.reduce((a, b) => a + b, 0)
+  console.log(sum_of_checkboxes)
 
-    predictionResultContainer.innerHTML = ""
-    conclusionContainer.innerHTML = ""
+  if (validateThreshold() == true) {
+    if (threshold.value !== "") {
+      let threshold_value = parseFloat(threshold.value)
 
-    let final_note = document.createElement('p')
-    final_note.innerText = 'Anda terdeteksi keracunan :'
-    let passing_threshold = false
+      predictionResultContainer.innerHTML = ""
+      conclusionContainer.innerHTML = ""
 
-    for (conclusion in diseases_list) {
-      let p = document.createElement('p')
-      p.className = 'ml-7 persentase-disease'
-      let disease_name = document.createTextNode(`${conclusion}`)
-      let disease_percentage = (diseases_list[conclusion]).at(-1)["total percentage"] * 100
-      p.appendChild(disease_name)
-      p.appendChild(document.createTextNode(` : ${disease_percentage} %`))
-      predictionResultContainer.appendChild(p)
+      let final_note = document.createElement('p')
 
-      if (disease_percentage >= threshold_value) {
-        passing_threshold = true
-        p.classList.add('text-red-500')
-        let pConclusion = document.createElement('p')
-        pConclusion.className = 'text-red-500'
-        let conclusion_name = document.createTextNode(`${conclusion}`)
-        pConclusion.appendChild(conclusion_name)
-        conclusionContainer.appendChild(pConclusion)
+      final_note.innerText = 'Anda terdeteksi keracunan :'
+      let passing_threshold = false
+
+      for (conclusion in diseases_list) {
+        let p = document.createElement('p')
+        p.className = 'ml-7 persentase-disease'
+        let disease_name = document.createTextNode(`${conclusion}`)
+        let disease_percentage = (diseases_list[conclusion]).at(-1)["total percentage"] * 100
+        disease_percentage = disease_percentage.toFixed(2)
+
+        p.appendChild(disease_name)
+        p.appendChild(document.createTextNode(` : ${disease_percentage} %`))
+        predictionResultContainer.appendChild(p)
+
+        if (disease_percentage >= threshold_value) {
+          passing_threshold = true
+          p.classList.add('text-red-500')
+          let pConclusion = document.createElement('p')
+          pConclusion.className = 'text-red-500'
+          let conclusion_name = document.createTextNode(`${conclusion}`)
+          pConclusion.appendChild(conclusion_name)
+          conclusionContainer.appendChild(pConclusion)
+        }
+
+        if (passing_threshold) {
+          conclusionContainer.insertAdjacentElement('afterbegin', final_note)
+        }
+
       }
 
-      if (passing_threshold) {
-        conclusionContainer.insertAdjacentElement('afterbegin', final_note)
+      console.table(indication)
+      console.table(diseases_list)
+
+    } else {
+
+      alert("Threshold kosong, maka kesimpulan akan diambil berdasarkan persentase terbesar")
+      predictionResultContainer.innerHTML = ""
+      conclusionContainer.innerHTML = ""
+      let final_note = document.createElement('p')
+      final_note.innerText = 'Anda terdeteksi keracunan :'
+
+      for (conclusion in diseases_list) {
+        let p = document.createElement('p')
+        p.className = 'ml-7 persentase-disease'
+        let disease_name = document.createTextNode(`${conclusion}`)
+        let disease_percentage = (diseases_list[conclusion]).at(-1)["total percentage"] * 100
+        disease_percentage = disease_percentage.toFixed(2)
+
+        Array.prototype.max = function () {
+          return Math.max.apply(null, this)
+        }
+
+        let max_percentage = Object.values(diseases_list).map(x => x.at(-1)["total percentage"]).max() * 100
+
+        if (disease_percentage == max_percentage && max_percentage != 0) {
+          conclusionContainer.insertAdjacentElement('afterbegin', final_note)
+          let pConclusion = document.createElement('p')
+          p.classList.add("text-red-500")
+          pConclusion.className = 'text-red-500'
+
+          let conclusion_name = document.createTextNode(`${conclusion}`)
+          pConclusion.appendChild(conclusion_name)
+          conclusionContainer.appendChild(pConclusion)
+        }
+
+        p.appendChild(disease_name)
+        p.appendChild(document.createTextNode(` : ${disease_percentage} %`))
+        predictionResultContainer.appendChild(p)
       }
 
+      console.table(indication)
+      console.table(diseases_list)
+
     }
-    console.table(indication)
-    console.table(diseases_list)
-
-  } else {
-    alert("Threshold is empty")
-    predictionResultContainer.innerHTML = ""
-    conclusionContainer.innerHTML = ""
-    for (conclusion in diseases_list) {
-      let p = document.createElement('p')
-      p.className = 'ml-7 persentase-disease'
-      let disease_name = document.createTextNode(`${conclusion}`)
-      let disease_percentage = (diseases_list[conclusion]).at(-1)["total percentage"] * 100
-      p.appendChild(disease_name)
-      p.appendChild(document.createTextNode(` : ${disease_percentage} %`))
-      predictionResultContainer.appendChild(p)
-    }
-
-    console.table(indication)
-    console.table(diseases_list)
-
   }
+
 })
 
 
