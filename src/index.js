@@ -101,7 +101,6 @@ processButton.addEventListener("click", () => {
   console.clear()
   main()
   let sum_of_checkboxes = checkboxes_list.reduce((a, b) => a + b, 0)
-  console.log(sum_of_checkboxes)
 
   if (validateThreshold() == true) {
     if (threshold.value !== "") {
@@ -165,8 +164,9 @@ processButton.addEventListener("click", () => {
         }
 
         let max_percentage = Object.values(diseases_list).map(x => x.at(-1)["total percentage"]).max() * 100
+        max_percentage = max_percentage.toFixed(2)
 
-        if (disease_percentage == max_percentage && max_percentage != 0) {
+        if (disease_percentage == max_percentage && max_percentage > 0) {
           conclusionContainer.insertAdjacentElement('afterbegin', final_note)
           let pConclusion = document.createElement('p')
           p.classList.add("text-red-500")
@@ -175,6 +175,7 @@ processButton.addEventListener("click", () => {
           let conclusion_name = document.createTextNode(`${conclusion}`)
           pConclusion.appendChild(conclusion_name)
           conclusionContainer.appendChild(pConclusion)
+          console.log("jalan")
         }
 
         p.appendChild(disease_name)
